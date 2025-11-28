@@ -1,33 +1,22 @@
-
-ifneq ($(shell which docker-compose 2>/dev/null),)
-    DOCKER_COMPOSE := docker-compose
-else
-    DOCKER_COMPOSE := docker compose
-endif
+PYTHON := python3
+PIP := pip3
 
 install:
-	$(DOCKER_COMPOSE) up -d
-
-remove:
-	@chmod +x confirm_remove.sh
-	@./confirm_remove.sh
+	cd backend && $(PIP) install -r requirements.txt
+	npm install
+	npm run build
 
 start:
-	$(DOCKER_COMPOSE) start
-startAndBuild: 
-	$(DOCKER_COMPOSE) up -d --build
+	cd backend && bash start.sh
 
-stop:
-	$(DOCKER_COMPOSE) stop
+dev:
+	cd backend && $(PYTHON) -m uvicorn open_webui.main:app --host 0.0.0.0 --port 8080 --reload
+
+build-frontend:
+	npm run build
 
 update:
-	# Calls the LLM update script
 	chmod +x update_ollama_models.sh
 	@./update_ollama_models.sh
 	@git pull
-	$(DOCKER_COMPOSE) down
-	# Make sure the ollama-webui container is stopped before rebuilding
-	@docker stop open-webui || true
-	$(DOCKER_COMPOSE) up --build -d
-	$(DOCKER_COMPOSE) start
-
+	$(MAKE) install
