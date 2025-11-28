@@ -992,10 +992,7 @@ if OLLAMA_BASE_URL == "" and OLLAMA_API_BASE_URL != "":
 
 if ENV == "prod":
     if OLLAMA_BASE_URL == "/ollama":
-        if USE_OLLAMA.lower() == "true":
-            OLLAMA_BASE_URL = "http://localhost:11434"
-        else:
-            OLLAMA_BASE_URL = "http://localhost:11434"
+        OLLAMA_BASE_URL = "http://localhost:11434"
 
 
 OLLAMA_BASE_URLS = os.environ.get("OLLAMA_BASE_URLS", "")
