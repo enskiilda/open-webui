@@ -1,35 +1,60 @@
-### Installing Both Ollama and Open WebUI Using Kustomize
+# Installation Guide
 
-For cpu-only pod
+## Prerequisites
 
-```bash
-kubectl apply -f ./kubernetes/manifest/base
-```
+- Python 3.11 or higher
+- Node.js 18 or higher
+- pip package manager
 
-For gpu-enabled pod
+## Installation
 
-```bash
-kubectl apply -k ./kubernetes/manifest
-```
-
-### Installing Both Ollama and Open WebUI Using Helm
-
-Package Helm file first
+### 1. Install Backend Dependencies
 
 ```bash
-helm package ./kubernetes/helm/
+cd backend
+pip install -r requirements.txt
 ```
 
-For cpu-only pod
+### 2. Install Frontend Dependencies and Build
 
 ```bash
-helm install ollama-webui ./ollama-webui-*.tgz
+npm install
+npm run build
 ```
 
-For gpu-enabled pod
+### 3. Start the Application
 
 ```bash
-helm install ollama-webui ./ollama-webui-*.tgz --set ollama.resources.limits.nvidia.com/gpu="1"
+cd backend
+bash start.sh
 ```
 
-Check the `kubernetes/helm/values.yaml` file to know which parameters are available for customization
+The application will be available at `http://localhost:8080`.
+
+## Development Mode
+
+To run in development mode with hot reloading:
+
+```bash
+cd backend
+python -m uvicorn open_webui.main:app --host 0.0.0.0 --port 8080 --reload
+```
+
+## Using Make Commands
+
+```bash
+make install    # Install all dependencies
+make start      # Start the application
+make dev        # Start in development mode with reload
+make update     # Update the application
+```
+
+## Environment Variables
+
+See `.env.example` for available configuration options.
+
+Key variables:
+- `OLLAMA_BASE_URL` - URL for Ollama backend (default: http://localhost:11434)
+- `OPENAI_API_KEY` - API key for OpenAI integration
+- `WEBUI_SECRET_KEY` - Secret key for session management
+
